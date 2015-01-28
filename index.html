@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Tween テスト</title>
+<style>
+	p {
+		margin-bottom: 1000px;
+	}
+	.objOuter {
+		position: relative;
+		background: #ccc;
+		height: 300px;
+		margin-bottom: 300px;
+	}
+
+	.objOuter div {
+		position: absolute;
+		top: 60px;
+		left: 200px;
+		display: block;
+		margin: 0 auto;
+		transform-orign: bottom center;
+	}
+
+	.wrapper {
+		width: 950px;
+		margin: 0 auto;
+	}
+</style>
+<script src="js/jquery.js"></script>
+<script src="js/Tween.js"></script>
+<script src="js/jquery.inview.js"></script>
+<script>
+$(function(){
+(function(){
+    if(typeof jQuery == 'undefined')return;
+    jQuery.noConflict();
+    jQuery(function($){
+        //対象の要素を取得
+        var twObj = $('.obj');
+        twObj.on('inview',function(){
+            //クリックしたら実行
+            init();
+            twObj.off('inview');
+        });
+        //要素をわかりやすくCSS適応
+        twObj.css({
+           　'background-color':'#0FF',
+           　'font-size':'12px'
+        });
+        function init() {
+            //new TWEEN.Tween(引数)に初期座標
+            var tween = new TWEEN.Tween( { x: 0 } )
+                //２秒後に目的地まで移動。
+                //というより、キー「x」のバリューは２秒後に400になる。
+                .to( { x: 400 , y:40 , o: 1, w: 50, h: 50}, 2000 )
+                //to()までの数値変化のイージング種類
+                .easing( TWEEN.Easing.Elastic.InOut )
+                //最初に一回だけonUpdateメソッドで対象要素にCSS,leftを適応。
+                .onUpdate( function () {
+                    // twObj.css('left', this.x + 'px');
+                    // twObj.css('top', this.y + 'px')
+                    twObj.css('width', this.w + 'px');
+                    twObj.css('height', this.h + 'px');
+                    twObj.css('opacity', this.o);
+                    //console.log(this.x);
+                })
+                //移動した後に実行するonComplete
+                .onComplete(function(){
+                    // twObj.text('おしまい');
+                });
+            //tweenを実行
+            tween.start();
+        }
+        //setIntervalやsetTimeoutの代わり
+        function animate() {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+        }
+        //アニメーション実行
+        animate();
+    });
+})();
+});
+</script>
+</head>
+<body>
+<p>
+スクロールしてください<br>
+↓<br>
+↓<br>
+↓<br>
+</p>
+<div class="wrapper"><div class="objOuter"><div class="obj"></div></div></div>
+<div class="objOuter"><div class="obj2"></div></div>
+<div class="objOuter"><div class="obj3"></div></div>
+<div class="objOuter"><div class="obj4"></div></div>
+</body>
+</html>
